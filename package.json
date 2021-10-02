@@ -12,6 +12,7 @@
   "dependencies": {
     "jsdom": "^17.0.0",
     "node-fetch": "^3.0.0",
-    "pdfjs-dist": "^2.9.359"
+    "pdfjs-dist": "^2.9.359",
+    "puppeteer": "^10.4.0"
   }
 }

@@ -15,10 +15,16 @@ class ScraperLocation {
 class Scraper {
 
 	constructor(url, phraseToFind) {
-		this.url = url.toLowerCase().split("?")[0]
+		if (!url || !phraseToFind) {
+			console.error("Error: Missing required argument(s)")
+			console.error("Usage: node init.js [url] [phrase to find] ")
+			process.exit(1)
+		}
+		this.url = url.split("?")[0].split("#")[0]
 		console.log("this.url = ", this.url)
 		this.phraseToFind = phraseToFind
 		this.locations = []
+		this.visitedURLs = []
 	}
 
 	start() {
@@ -38,9 +44,12 @@ class Scraper {
 			return
 		}
 		try {
+			if (this.visitedURLs.includes(url)) return
 			let res = await (await fetch(url)).text()
+			this.visitedURLs.push(url)
 			await this.parsePage(url, res, depth);
 		} catch (e) {
+			console.error("Got error in getPage: "+e)
 			return
 		}
 	}
@@ -53,31 +62,38 @@ class Scraper {
 		if (!dom.window.document.body.textContent) {
 			return
 		}
-		var stringToGoIntoTheRegex = this.phraseToFind;
-		var regex2 = new RegExp("/\s?([^\s]+\swelcome\s[^\s]+)\s?/i")
-		var regex = new RegExp("\s?([^\s]+\s" + stringToGoIntoTheRegex + "\s[^\s]+)\s?", "i");
-		console.log(regex2.source)
+		var regex = new RegExp("\\s?([^\\s]+\\s" + this.phraseToFind + "\\s[^\\s]+)\\s?", "i");
+		// console.log(dom.window.document.body.textContent.replace(/\s/g,''))
 		// at this point, the line above is the same as: var regex =
 
-		let matches = dom.window.document.body.textContent.match(regex2)
-		
-		for (let match of matches) {
-
-			this.locations.push({ url: currentURL, text: match})
+		//let matches = "Det som virkelig suger er korona fordi det er det verste som finnes".match(regex)
+ 		let matches = dom.window.document.body.textContent.match(regex)
+		dom.window.document.body.content
+		if (!!matches && matches.length > 0) {
+			for (let match of matches) {
+				console.log("Found match: "+match)
+				this.locations.push({ url: currentURL, text: match})
+			}
 		}
 
 		var allParas = dom.window.document.getElementsByTagName('a')
 		for (let param of allParas) {
+			//console.log("Found <a> tag!")
 			//Only get urls sub page, but not same
 			if (!param || !param.getAttribute("href")) {
 				continue
 			}
-			let url = param.getAttribute("href").toLowerCase().split("?")[0] + ""
-			/* console.log("includes: "+url.includes(this.url))
-			console.log(`url !=: ${url != this.url}`)
-			console.log(`both: ${url.includes(this.url) && url != this.url}`) */
-			if (url.includes(this.url) && url != this.url) {
+			console.log("Found <a> tag with href: "+param.getAttribute("href").split("?")[0].split("#")[0])
+			let url = param.getAttribute("href").split("?")[0].split("#")[0] + ""
+			//console.log("slashes: "+this.url.match(/\//g).length)
+			let compareURL = this.url.match(/\//g).length > 2 ? this.url.substr(0, this.url.lastIndexOf("/")) : this.url
+			var t = "\\some\\route\\here";
+			//console.log("includes comp url (" + compareURL + "): "+url.includes(compareURL))
+			if (url.includes(compareURL)) {
 				//console.log("going to url: " + url)
+				if (url.substring(url.length-3, url.length-1) == "pdf") {
+					console.log("File is PDF!!")
+				}
 				await this.getPage(url, depth + 1)
 			}
 		}

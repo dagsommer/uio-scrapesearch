@@ -1,0 +1,17 @@
+{
+  "name": "uio-scraper2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Scraper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "jsdom": "^17.0.0",
+    "node-fetch": "^3.0.0",
+    "pdfjs-dist": "^2.9.359"
+  }
+}

@@ -17,7 +17,7 @@ class ScraperLocation {
 		return sl
 	}
 	pretty() {
-		return `${this.fileURL} ${!!this.pageNumber ? "side " + this.pageNumber : ""}: ${this.textExcerpt}`
+		return `${!!this.pageNumber ? "side " + this.pageNumber + ": " : ""}${this.textExcerpt}`
 	}
 }
 
@@ -52,12 +52,13 @@ class Scraper {
 
 	async start() {
 		this.browser = await Puppeteer.launch({
-			headless: false,
+			headless: true,
+			userDataDir: "dataDir"
 		})
 		this.page = await this.browser.newPage()
 		await this.page.setRequestInterception(true)
 		this.page.on('request', (req) => {
-			if (req.resourceType() == 'font' || req.resourceType() == 'image') {
+			if (req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == 'stylesheet') {
 				req.abort();
 			}
 			else {
@@ -66,9 +67,15 @@ class Scraper {
 		})
 
 		await this.getPage(this.url, 0)
+		let locs = {}
 		for (let loc of this.locations) {
-			console.log(`${loc.pretty()}`)
+			if (!locs[loc.fileURL]) {
+				locs[loc.fileURL] = true
+				console.log("\n\n"+loc.fileURL+":")
+			}
+			console.log(`\t\t${loc.pretty()}`)
 		}
+		console.log("\nFant totalt " + this.locations.length + " resultater!")
 		this.browser.close()
 	}
 
@@ -89,9 +96,11 @@ class Scraper {
 			if (this.visitedURLs.includes(url)) return
 			let res = await (await fetch(url)).text()
 
-			await this.page.goto(url, {
+			let response = await this.page.goto(url, {
 				waitUntil: 'networkidle0',
 			})
+			
+			console.log("Was cached? "+ (response.fromCache() ? "\x1b[5m\x1b[32mTRUE\x1b[0m" : "\x1b[2m\x1b[4m\x1b[31mFALSE\x1b[0m"))
 			//await this.page.waitForNavigation()
 			this.visitedURLs.push(url)
 			await this.parsePage(url, res, depth);

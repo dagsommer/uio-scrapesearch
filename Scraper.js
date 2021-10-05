@@ -166,7 +166,7 @@ class Scraper {
 				let currentIsIndex = currentLast.includes("index") && currentURL.substring(0, currentURL.length - currentLast.length) == url
 				let newLast = url.split("/").pop()
 				let newIsIndex = newLast.includes("index") && url.substring(0, url.length - newLast.length) == currentURL
-				if (this.visitedURLs.includes(url) || currentIsIndex || newIsIndex) continue
+				if (this.visitedURLs.includes(url) || newIsIndex) continue
 
 				// console.log("going to url: " + url)
 				// console.log("with ending: "+url.substring(url.length - 3, url.length))

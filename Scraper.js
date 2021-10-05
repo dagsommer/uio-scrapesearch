@@ -164,7 +164,7 @@ class Scraper {
 			if (url.includes(compareURL)) {
 				let currentLast = currentURL.split("/").pop()
 				let currentIsIndex = currentLast.includes("index") && currentURL.substring(0, currentURL.length - currentLast.length) == url
-				let newLast = currentURL.split("/").pop()
+				let newLast = url.split("/").pop()
 				let newIsIndex = newLast.includes("index") && url.substring(0, url.length - newLast.length) == currentURL
 				if (this.visitedURLs.includes(url) || currentIsIndex || newIsIndex) continue
 

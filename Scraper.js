@@ -101,6 +101,7 @@ class Scraper {
 			})
 			
 			console.log("Was cached? "+ (response.fromCache() ? "\x1b[5m\x1b[32mTRUE\x1b[0m" : "\x1b[2m\x1b[4m\x1b[31mFALSE\x1b[0m"))
+			console.log("Accessing url: "+url)
 			//await this.page.waitForNavigation()
 			this.visitedURLs.push(url)
 			await this.parsePage(url, res, depth);

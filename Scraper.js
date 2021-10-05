@@ -166,7 +166,11 @@ class Scraper {
 				let currentIsIndex = currentLast.includes("index") && currentURL.substring(0, currentURL.length - currentLast.length) == url
 				let newLast = url.split("/").pop()
 				let newIsIndex = newLast.includes("index") && url.substring(0, url.length - newLast.length) == currentURL
-				if (this.visitedURLs.includes(url) || newIsIndex) continue
+				console.log("Trying URL: "+url)
+				if (this.visitedURLs.includes(url) || currentIsIndex || newIsIndex) {
+					console.log(`${this.visitedURLs.includes(url) ? "Already visited URL" : currentIsIndex ? "Current URL has index.html. (trying to redirect to /)" : "New URL has index.html. (trying to redirect to /index.html)"}`)
+					continue
+				}
 
 				// console.log("going to url: " + url)
 				// console.log("with ending: "+url.substring(url.length - 3, url.length))
@@ -175,6 +179,8 @@ class Scraper {
 					continue
 				}
 				await this.getPage(url, depth + 1)
+			} else {
+				console.log(`URL out of scope: ${compareURL}`)
 			}
 		}
 	}

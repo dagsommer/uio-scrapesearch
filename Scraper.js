@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import { JSDOM } from 'jsdom'
 import Puppeteer from 'puppeteer';
 
-const MAX_DEPTH = 2
+const MAX_DEPTH = 3
 
 class ScraperLocation {
 
@@ -168,7 +168,8 @@ class Scraper {
 				let newIsIndex = newLast.includes("index") && url.substring(0, url.length - newLast.length) == currentURL
 				console.log("Trying URL: "+url)
 				if (this.visitedURLs.includes(url) || currentIsIndex || newIsIndex) {
-					console.log(`${this.visitedURLs.includes(url) ? "Already visited URL" : currentIsIndex ? "Current URL has index.html. (trying to redirect to /)" : "New URL has index.html. (trying to redirect to /index.html)"}`)
+					console.log(`\x1b[2m\x1b[43m${this.visitedURLs.includes(url) ? "Already visited URL " : currentIsIndex ? "Current URL has index.html. (trying to redirect to /)" : "New URL has index.html. (trying to redirect to /index.html)"}: ${url}\x1b[0m`)
+					console.log("\x1b[7mThis is reverse\x1b[0m")
 					continue
 				}
 
@@ -180,7 +181,7 @@ class Scraper {
 				}
 				await this.getPage(url, depth + 1)
 			} else {
-				console.log(`URL out of scope: ${compareURL}`)
+				console.log(`\x1b[2m\x1b[45mURL out of scope: ${compareURL}\x1b[0m`)
 			}
 		}
 	}

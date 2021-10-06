@@ -100,8 +100,8 @@ class Scraper {
 				waitUntil: 'networkidle0',
 			})
 			
-			console.log("Was cached? "+ (response.fromCache() ? "\x1b[5m\x1b[32mTRUE\x1b[0m" : "\x1b[2m\x1b[4m\x1b[31mFALSE\x1b[0m"))
-			console.log("Accessing url: "+url)
+			//console.log("Was cached? "+ (response.fromCache() ? "\x1b[5m\x1b[32mTRUE\x1b[0m" : "\x1b[2m\x1b[4m\x1b[31mFALSE\x1b[0m"))
+			//console.log("Accessing url: "+url)
 			//await this.page.waitForNavigation()
 			this.visitedURLs.push(url)
 			await this.parsePage(url, res, depth);
@@ -159,17 +159,17 @@ class Scraper {
 			//console.log("Found <a> tag with href: " + param.getAttribute("href").split("?")[0].split("#")[0])
 			let url = param.getAttribute("href").split("?")[0].split("#")[0] + ""
 			//console.log("slashes: "+this.url.match(/\//g).length)
-			let compareURL = currentURL.match(/\//g).length > 2 ? currentURL.substr(0, currentURL.lastIndexOf("/")) : currentURL
+			let currentLast = currentURL.split("/").pop()
+			let compareURL = currentLast.includes("index") && currentURL.match(/\//g).length > 2 ? currentURL.substr(0, currentURL.lastIndexOf("/")) : currentURL
 			//console.log("includes comp url (" + compareURL + "): "+url.includes(compareURL))
 			if (url.includes(compareURL)) {
-				let currentLast = currentURL.split("/").pop()
 				let currentIsIndex = currentLast.includes("index") && currentURL.substring(0, currentURL.length - currentLast.length) == url
 				let newLast = url.split("/").pop()
 				let newIsIndex = newLast.includes("index") && url.substring(0, url.length - newLast.length) == currentURL
-				console.log("Trying URL: "+url)
+				//console.log("Trying URL: "+url)
 				if (this.visitedURLs.includes(url) || currentIsIndex || newIsIndex) {
-					console.log(`\x1b[2m\x1b[33m${this.visitedURLs.includes(url) ? "Already visited URL " : currentIsIndex ? "Current URL has index.html. (trying to redirect to /)" : "New URL has index.html. (trying to redirect to /index.html)"}: ${url}\x1b[0m`)
-					console.log("\x1b[7mThis is reverse\x1b[0m")
+					//console.log(`\x1b[2m\x1b[33m${this.visitedURLs.includes(url) ? "Already visited URL " : currentIsIndex ? "Current URL has index.html. (trying to redirect to /)" : "New URL has index.html. (trying to redirect to /index.html)"}: ${url}\x1b[0m`)
+					//console.log("\x1b[7mThis is reverse\x1b[0m")
 					continue
 				}
 
@@ -181,7 +181,7 @@ class Scraper {
 				}
 				await this.getPage(url, depth + 1)
 			} else {
-				console.log(`\x1b[2m\x1b[35mURL out of scope: ${compareURL}\x1b[0m`)
+				//console.log(`\x1b[2m\x1b[35mURL out of scope: ${compareURL}\x1b[0m`)
 			}
 		}
 	}
